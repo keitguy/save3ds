@@ -26,12 +26,18 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Compile save3ds_fuse
-        run: cargo build --release --manifest-path save3ds-source/save3ds_fuse/Cargo.toml
+      - name: Build save3ds_fuse
+        run: cargo build --release --manifest-path save3ds-source/Cargo.toml
+
+      - name: Locate executable
+        shell: pwsh
+        run: |
+          Get-ChildItem save3ds-source -Filter save3ds_fuse.exe -Recurse |
+            Select-Object -ExpandProperty FullName
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
         with:
           name: save3ds_fuse-windows
-          path: save3ds-source/save3ds_fuse/target/release/save3ds_fuse.exe
+          path: save3ds-source/target/release/save3ds_fuse.exe
           if-no-files-found: error
