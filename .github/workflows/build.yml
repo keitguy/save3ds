@@ -1,0 +1,37 @@
+
+name: Build save3ds_fuse
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout workflow repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Save3DS source
+        uses: actions/checkout@v4
+        with:
+          repository: wwylele/save3ds
+          path: save3ds-source
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Compile save3ds_fuse
+        run: cargo build --release --manifest-path save3ds-source/save3ds_fuse/Cargo.toml
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: save3ds_fuse-windows
+          path: save3ds-source/save3ds_fuse/target/release/save3ds_fuse.exe
+          if-no-files-found: error
